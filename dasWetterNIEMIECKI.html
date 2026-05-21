@@ -20,10 +20,10 @@
         .progress-bar { flex-grow: 1; height: 16px; background-color: var(--gray); border-radius: 10px; overflow: hidden; }
         .progress-fill { height: 100%; background-color: var(--primary); width: 0%; transition: width 0.3s; box-shadow: 0 0 10px var(--blue); }
         .hearts { color: var(--wrong); font-size: 22px; font-weight: bold; }
-        .question-header { font-size: 22px; font-weight: bold; margin-bottom: 20px; color: var(--blue); }
-        .word-to-translate { font-size: 28px; color: #ffffff; text-align: center; margin-bottom: 30px; font-weight: bold; }
+        .question-header { font-size: 20px; font-weight: bold; margin-bottom: 20px; color: var(--blue); }
+        .word-to-translate { font-size: 24px; color: #ffffff; text-align: center; margin-bottom: 30px; font-weight: bold; line-height: 1.4; }
         .options-grid { display: flex; flex-direction: column; gap: 12px; }
-        .option-btn { background-color: var(--card-bg); border: 2px solid var(--gray); border-bottom-width: 4px; border-radius: 15px; padding: 14px 20px; font-size: 17px; cursor: pointer; text-align: left; color: var(--text); }
+        .option-btn { background-color: var(--card-bg); border: 2px solid var(--gray); border-bottom-width: 4px; border-radius: 15px; padding: 14px 20px; font-size: 16px; cursor: pointer; text-align: left; color: var(--text); }
         .option-btn.selected { border-color: var(--blue); background-color: rgba(0, 240, 255, 0.1); }
         .option-btn.correct { border-color: #58cc02; background-color: rgba(88, 204, 2, 0.15); color: #58cc02; }
         .option-btn.wrong { border-color: var(--wrong); background-color: rgba(255, 75, 75, 0.15); color: var(--wrong); }
@@ -31,7 +31,7 @@
         .text-input { width: 100%; padding: 15px; font-size: 18px; border: 2px solid var(--gray); border-radius: 15px; box-sizing: border-box; outline: none; background-color: var(--card-bg); color: #fff; }
         .text-input:focus { border-color: var(--blue); }
         .matching-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .match-btn { background-color: var(--card-bg); border: 2px solid var(--gray); border-bottom-width: 4px; border-radius: 12px; padding: 15px 10px; font-size: 15px; cursor: pointer; text-align: center; color: var(--text); }
+        .match-btn { background-color: var(--card-bg); border: 2px solid var(--gray); border-bottom-width: 4px; border-radius: 12px; padding: 12px 6px; font-size: 12px; cursor: pointer; text-align: center; color: var(--text); font-weight: 500; }
         .match-btn.selected { border-color: var(--blue); background-color: rgba(0, 240, 255, 0.1); }
         .match-btn.matched { visibility: hidden; }
         .footer { margin-top: auto; padding-top: 25px; padding-bottom: 10px; }
@@ -53,28 +53,77 @@
 </div>
 
 <div id="screen-win" class="app-screen" style="text-align: center;">
-    <h1 style="color: var(--blue); font-size: 36px; margin-top: 10vh; text-shadow: 0 0 10px rgba(0,240,255,0.4)">Wunderbar! 🎉</h1>
-    <p>Opanowałeś pogodę po niemiecku!</p>
+    <h1 style="color: var(--blue); font-size: 36px; margin-top: 10vh; text-shadow: 0 0 10px rgba(0,240,255,0.4)">Sehr gut! 🎉</h1>
+    <p>Niemiecki opanowany na błysk!</p>
     <a href="index.html" class="btn-main" style="text-decoration: none; display: block; text-align: center; box-sizing: border-box;">Wróć do menu</a>
 </div>
 
 <div id="screen-lose" class="app-screen" style="text-align: center;">
-    <h1 style="color: var(--wrong); font-size: 36px; margin-top: 10vh;">Brak żyć! 💔</h1>
-    <p>Spróbuj jeszcze raz po przejrzeniu materiałów.</p>
+    <h1 style="color: var(--wrong); font-size: 36px; margin-top: 10vh;">Schade! 💔</h1>
+    <p>Skończyły Ci się szanse. Powtórz słówka w menu.</p>
     <a href="index.html" class="btn-main" style="text-decoration: none; display: block; text-align: center; box-sizing: border-box; background-color: var(--gray); border-bottom-color: #1a233a; color: #fff;">Wróć do menu</a>
 </div>
 
 <script>
+    // GENERATOR DŹWIĘKÓW (SYNTEZATOR WEB AUDIO)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            osc.frequency.setValueAtTime(783.99, now + 0.16);
+            osc.frequency.setValueAtTime(1046.50, now + 0.24);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.linearRampToValueAtTime(0, now + 0.4);
+            osc.start(now);
+            osc.stop(now + 0.4);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.linearRampToValueAtTime(90, now + 0.35);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.linearRampToValueAtTime(0, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        }
+    }
+
+    // BAZA PYTAŃ - NIEMIECKI
     const vocabulary = [
-        { de: "das Wetter", pl: "pogoda" }, { de: "Wie ist das Wetter heute?", pl: "Jaka jest dziś pogoda?" },
-        { de: "Das Wetter ist schön.", pl: "Pogoda jest piękna." }, { de: "Das Wetter ist gut.", pl: "Jest ładna pogoda." },
-        { de: "Das Wetter ist schlecht.", pl: "Jest brzydka pogoda." }, { de: "das Eis", pl: "lód" },
-        { de: "der Himmel", pl: "niebo" }, { de: "die Sonne", pl: "słońce" }, { de: "die Wolke", pl: "chmura" },
-        { de: "der Regen", pl: "deszcz" }, { de: "der Schnee", pl: "śnieg" }, { de: "der Wind", pl: "wiatr" },
-        { de: "der Nebel", pl: "mgła" }, { de: "der Hagel", pl: "grad" }, { de: "Es ist warm.", pl: "Jest ciepło." },
-        { de: "Es ist kalt.", pl: "Jest zimno." }, { de: "Es ist heiß.", pl: "Jest gorąco." },
-        { de: "Es ist kühl.", pl: "Jest chłodno." }, { de: "Grad", pl: "stopnie" },
-        { de: "Wie viel Grad sind es heute?", pl: "Ile jest dzisiaj stopni?" }, { de: "Es sind 20 Grad.", pl: "Jest 20 stopni." }
+        { de: "das Wetter", pl: "pogoda" },
+        { de: "Wie ist das Wetter heute?", pl: "Jaka jest dziś pogoda?" },
+        { de: "Das Wetter ist schön.", pl: "Pogoda jest piękna." },
+        { de: "Das Wetter ist gut.", pl: "Jest ładna pogoda." },
+        { de: "Das Wetter ist schlecht.", pl: "Jest brzydka pogoda." },
+        { de: "das Eis", pl: "lód" },
+        { de: "der Himmel", pl: "niebo" },
+        { de: "die Sonne", pl: "słońce" },
+        { de: "die Wolke", pl: "chmura" },
+        { de: "der Regen", pl: "deszcz" },
+        { de: "der Schnee", pl: "śnieg" },
+        { de: "der Wind", pl: "wiatr" },
+        { de: "der Nebel", pl: "mgła" },
+        { de: "der Hagel", pl: "grad" },
+        { de: "Es ist warm.", pl: "Jest ciepło." },
+        { de: "Es ist kalt.", pl: "Jest zimno." },
+        { de: "Es ist heiß.", pl: "Jest gorąco." },
+        { de: "Es ist kühl.", pl: "Jest chłodno." },
+        { de: "Grad", pl: "stopnie" },
+        { de: "Wie viel Grad sind es heute?", pl: "Ile jest dzisiaj stopni?" },
+        { de: "Es sind 20 Grad.", pl: "Jest 20 stopni." }
     ];
 
     let currentQuestionIndex = 0, hearts = 3, isAnswerChecked = false, currentTaskType = "", questions = [];
@@ -82,7 +131,7 @@
 
     function initGame() {
         let pool = [...vocabulary].sort(() => Math.random() - 0.5);
-        questions = pool.slice(0, 5).map(item => {
+        questions = pool.slice(0, 10).map(item => {
             let rand = Math.random();
             let type = rand > 0.66 ? "input" : (rand > 0.33 ? "match" : "choice");
             return { item, type };
@@ -107,7 +156,7 @@
         zone.innerHTML = "";
 
         if (currentTaskType === "choice") {
-            zone.innerHTML = `<div class="question-header">Wybierz poprawne tłumaczenie:</div><div class="word-to-translate">${task.item.de}</div><div class="options-grid" id="options-box"></div>`;
+            zone.innerHTML = `<div class="question-header">Przetłumacz:</div><div class="word-to-translate">${task.item.de}</div><div class="options-grid" id="options-box"></div>`;
             let options = [task.item.pl];
             let wrongPool = [...new Set(vocabulary.filter(v => v.pl !== task.item.pl).map(v => v.pl))].sort(() => Math.random() - 0.5);
             for(let i=0; i<3; i++) if(wrongPool[i]) options.push(wrongPool[i]);
@@ -117,11 +166,11 @@
                 document.getElementById('options-box').appendChild(btn);
             });
         } else if (currentTaskType === "input") {
-            zone.innerHTML = `<div class="question-header">Napisz to po niemiecku:</div><div class="word-to-translate" style="color:var(--blue);">${task.item.pl}</div><div class="input-container"><input type="text" class="text-input" id="typed-answer" placeholder="Wpisz odpowiedź..." autocomplete="off"></div>`;
+            zone.innerHTML = `<div class="question-header">Wpisz tłumaczenie po polsku:</div><div class="word-to-translate" style="color:var(--blue);">${task.item.de}</div><div class="input-container"><input type="text" class="text-input" id="typed-answer" placeholder="Twoja odpowiedź..." autocomplete="off"></div>`;
             const input = document.getElementById('typed-answer'); input.focus();
             input.oninput = () => { if(input.value.trim().length > 0) checkBtn.classList.add('active'); else checkBtn.classList.remove('active'); };
         } else if (currentTaskType === "match") {
-            zone.innerHTML = `<div class="question-header" style="margin-bottom:30px;">Połącz pasujące pary:</div><div class="matching-grid" id="matching-box"></div>`;
+            zone.innerHTML = `<div class="question-header" style="margin-bottom:20px;">Połącz pary słówek:</div><div class="matching-grid" id="matching-box"></div>`;
             let pairPool = vocabulary.filter(v => v.de !== task.item.de).sort(() => Math.random() - 0.5);
             let currentPairs = [task.item, pairPool[0], pairPool[1]];
             let elements = [];
@@ -142,7 +191,11 @@
             if (selectedMatchItem === btn) { btn.classList.remove('selected'); selectedMatchItem = null; return; }
             if (selectedMatchItem.dataset.lang !== btn.dataset.lang && selectedMatchItem.dataset.match === btn.textContent) {
                 selectedMatchItem.className = 'match-btn matched'; btn.className = 'match-btn matched'; selectedMatchItem = null; completedPairsCount++;
-                if (completedPairsCount === 3) { isAnswerChecked = true; const cb = document.getElementById('check-btn'); cb.classList.add('active'); cb.textContent = 'Dalej'; cb.style.backgroundColor = 'var(--primary)'; }
+                if (completedPairsCount === 3) { 
+                    isAnswerChecked = true; 
+                    playSound('correct');
+                    const cb = document.getElementById('check-btn'); cb.classList.add('active'); cb.textContent = 'Dalej'; cb.style.backgroundColor = 'var(--primary)'; 
+                }
             } else { selectedMatchItem.classList.remove('selected'); btn.classList.add('selected'); selectedMatchItem = btn; }
         }
     }
@@ -158,15 +211,28 @@
                 document.querySelectorAll('.option-btn').forEach(btn => { if (btn.textContent === task.item.pl) btn.classList.add('correct'); if (btn.classList.contains('selected') && selectedChoice !== task.item.pl) btn.classList.add('wrong'); });
                 isCorrect = (selectedChoice === task.item.pl);
             } else if (currentTaskType === "input") {
-                const typed = document.getElementById('typed-answer').value.trim().toLowerCase().replace(/\.$/, "");
-                const correctAns = task.item.de.toLowerCase().replace(/\.$/, "");
+                const typed = document.getElementById('typed-answer').value.trim().toLowerCase();
+                const correctAns = task.item.pl.toLowerCase();
                 const zone = document.getElementById('game-zone');
-                if (typed === correctAns) { isCorrect = true; zone.innerHTML += `<div style="color:var(--blue);font-weight:bold;margin-top:20px;text-align:center;">Doskonale!</div>`; } 
-                else { isCorrect = false; zone.innerHTML += `<div style="color:var(--wrong);font-weight:bold;margin-top:20px;text-align:center;">Błąd! Poprawnie: <br><b style="font-size:22px;color:#fff;">${task.item.de}</b></div>`; }
+                if (typed === correctAns) { isCorrect = true; zone.innerHTML += `<div style="color:var(--blue);font-weight:bold;margin-top:20px;text-align:center;">Dobrze!</div>`; } 
+                else { isCorrect = false; zone.innerHTML += `<div style="color:var(--wrong);font-weight:bold;margin-top:20px;text-align:center;">Błąd! Prawidłowo: <br><b style="font-size:22px;color:#fff;">${task.item.pl}</b></div>`; }
             } else if (currentTaskType === "match") { isCorrect = true; }
 
-            if (isCorrect) { checkBtn.textContent = 'Dalej'; checkBtn.style.backgroundColor = 'var(--primary)'; } 
-            else { hearts--; updateHearts(); checkBtn.textContent = 'Dalej'; checkBtn.style.backgroundColor = 'var(--wrong)'; if (hearts <= 0) { document.getElementById('screen-quiz').classList.remove('active'); document.getElementById('screen-lose').classList.add('active'); } }
+            if (isCorrect) { 
+                playSound('correct');
+                checkBtn.textContent = 'Dalej'; 
+                checkBtn.style.backgroundColor = 'var(--primary)'; 
+            } else { 
+                playSound('wrong');
+                hearts--; 
+                updateHearts(); 
+                checkBtn.textContent = 'Dalej'; 
+                checkBtn.style.backgroundColor = 'var(--wrong)'; 
+                if (hearts <= 0) { 
+                    document.getElementById('screen-quiz').className = 'app-screen'; 
+                    document.getElementById('screen-lose').className = 'app-screen active'; 
+                } 
+            }
         } else { currentQuestionIndex++; loadTask(); }
     };
 
