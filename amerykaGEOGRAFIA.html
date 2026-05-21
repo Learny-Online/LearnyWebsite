@@ -65,6 +65,46 @@
 </div>
 
 <script>
+    // GENERATOR DŹWIĘKÓW (SYNTEZATOR WEB AUDIO)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+        // Uruchomienie kontekstu audio (wymóg przeglądarek na Androidzie)
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'correct') {
+            // Dźwięk sukcesu: radosne, wzrastające arpeggio
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now); // C5
+            osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+            osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+            osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.linearRampToValueAtTime(0, now + 0.4);
+            osc.start(now);
+            osc.stop(now + 0.4);
+        } else if (type === 'wrong') {
+            // Dźwięk błędu: niski, smutny, opadający ton
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.linearRampToValueAtTime(90, now + 0.35);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.linearRampToValueAtTime(0, now + 0.35);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        }
+    }
+
+    // BAZA PYTAŃ - AMERYKA
     const vocabulary = [
         { de: "Największy system rzeczny Ameryki Płd.", pl: "Amazonka" },
         { de: "W jakiej strefie leży Ameryka Środkowa?", pl: "międzyzwrotnikowej" },
@@ -79,7 +119,28 @@
         { de: "Potomkowie odmiany białej i czarnej", pl: "Mulaci" },
         { de: "Światowe centrum branży IT w USA", pl: "Dolina Krzemowa" },
         { de: "Negatywny skutek wylesiania Amazonii", pl: "utrata bioróżnorodności" },
-        { de: "Przyczyna powstawania slumsów (faveli)", pl: "zbyt duży napływ ludności" }
+        { de: "Przyczyna powstawania slumsów (faveli)", pl: "zbyt duży napływ ludności" },
+        { de: "Najwyższy szczyt Ameryki Północnej", pl: "Denali" },
+        { de: "Najwyższy szczyt Ameryki Południowej", pl: "Aconcagua" },
+        { de: "Wielki łańcuch górski na zachodzie Ameryki Północnej", pl: "Kordyliery" },
+        { de: "Długi łańcuch górski ciągnący się na zachodzie Ameryki Południowej", pl: "Andy" },
+        { de: "Główna rzeka Ameryki Północnej", pl: "Missisipi" },
+        { de: "Największa nizinna kraina w Ameryce Południowej", pl: "Nizina Amazonki" },
+        { de: "Państwo z największą liczbą ludności w Ameryce Południowej", pl: "Brazylia" },
+        { de: "Rdzenna ludność Ameryki przed przybyciem Kolumba", pl: "Indianie" },
+        { de: "Ogromne megamiasto (konurbacja) w USA (np. od Bostonu do Waszyngtonu)", pl: "Megalopolis" },
+        { de: "Charakterystyczne ukształtowanie środkowej części USA", pl: "Wielkie Równiny" },
+        { de: "Jedna z najsuchszych pustyń świata leżąca w Ameryce Płd.", pl: "Atakama" },
+        { de: "Jak nazywają się dzielnice nędzy w Brazylii?", pl: "fawele" },
+        { de: "Jaki ocean ogranicza Amerykę od wschodu?", pl: "Atlantycki" },
+        { de: "Jaki ocean ogranicza Amerykę od zachodu?", pl: "Spokojny" },
+        { de: "Wąski pas lądu łączący obie Ameryki", pl: "Ameryka Środkowa" },
+        { de: "Skrajnie silny, wirujący wiatr połączony z burzą w USA", pl: "tornado" },
+        { de: "Gwałtowny cyklon tropikalny powstający nad Atlantykiem", pl: "huragan" },
+        { de: "Słynny sztuczny rów wodny łączący dwa oceany", pl: "Kanał Panamski" },
+        { de: "Główny język urzędowy w Brazylii", pl: "portugalski" },
+        { de: "Główny język urzędowy w Argentynie i Meksyku", pl: "hiszpański" },
+        { de: "Gospodarcza potęga Ameryki Północnej (skrót państwa)", pl: "USA" }
     ];
 
     let currentQuestionIndex = 0, hearts = 3, isAnswerChecked = false, currentTaskType = "", questions = [];
@@ -87,7 +148,7 @@
 
     function initGame() {
         let pool = [...vocabulary].sort(() => Math.random() - 0.5);
-        questions = pool.slice(0, 5).map(item => {
+        questions = pool.slice(0, 10).map(item => {
             let rand = Math.random();
             let type = rand > 0.66 ? "input" : (rand > 0.33 ? "match" : "choice");
             return { item, type };
@@ -147,7 +208,11 @@
             if (selectedMatchItem === btn) { btn.classList.remove('selected'); selectedMatchItem = null; return; }
             if (selectedMatchItem.dataset.lang !== btn.dataset.lang && selectedMatchItem.dataset.match === btn.textContent) {
                 selectedMatchItem.className = 'match-btn matched'; btn.className = 'match-btn matched'; selectedMatchItem = null; completedPairsCount++;
-                if (completedPairsCount === 3) { isAnswerChecked = true; const cb = document.getElementById('check-btn'); cb.classList.add('active'); cb.textContent = 'Dalej'; cb.style.backgroundColor = 'var(--primary)'; }
+                if (completedPairsCount === 3) { 
+                    isAnswerChecked = true; 
+                    playSound('correct'); // Dźwięk przy pełnym sukcesie łączenia par
+                    const cb = document.getElementById('check-btn'); cb.classList.add('active'); cb.textContent = 'Dalej'; cb.style.backgroundColor = 'var(--primary)'; 
+                }
             } else { selectedMatchItem.classList.remove('selected'); btn.classList.add('selected'); selectedMatchItem = btn; }
         }
     }
@@ -170,8 +235,21 @@
                 else { isCorrect = false; zone.innerHTML += `<div style="color:var(--wrong);font-weight:bold;margin-top:20px;text-align:center;">Błąd! Prawidłowo: <br><b style="font-size:22px;color:#fff;">${task.item.pl}</b></div>`; }
             } else if (currentTaskType === "match") { isCorrect = true; }
 
-            if (isCorrect) { checkBtn.textContent = 'Dalej'; checkBtn.style.backgroundColor = 'var(--primary)'; } 
-            else { hearts--; updateHearts(); checkBtn.textContent = 'Dalej'; checkBtn.style.backgroundColor = 'var(--wrong)'; if (hearts <= 0) { document.getElementById('screen-quiz').className = 'app-screen'; document.getElementById('screen-lose').className = 'app-screen active'; } }
+            if (isCorrect) { 
+                playSound('correct');
+                checkBtn.textContent = 'Dalej'; 
+                checkBtn.style.backgroundColor = 'var(--primary)'; 
+            } else { 
+                playSound('wrong');
+                hearts--; 
+                updateHearts(); 
+                checkBtn.textContent = 'Dalej'; 
+                checkBtn.style.backgroundColor = 'var(--wrong)'; 
+                if (hearts <= 0) { 
+                    document.getElementById('screen-quiz').className = 'app-screen'; 
+                    document.getElementById('screen-lose').className = 'app-screen active'; 
+                } 
+            }
         } else { currentQuestionIndex++; loadTask(); }
     };
 
