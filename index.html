@@ -1,49 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learnly - Your Short Tests</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Kontener dla płynnego przesuwania sekcji w poziomie */
+        .slider-wrapper {
+            display: flex;
+            width: 200%; /* Dwie sekcje obok siebie */
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            height: 100%;
+        }
+
+        .screen-section {
+            width: 50%; /* Każda sekcja zajmuje dokładnie ekran telefonu */
+            flex-shrink: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+
+        /* Stan po kliknięciu - przesunięcie całego kontenera w lewo o jeden ekran */
+        .slide-left {
+            transform: translateX(-50%);
+        }
+
+        /* Ukrywanie menu angielskiego na start */
+        .subjects-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .subjects-container.open {
+            max-height: 400px; /* Rozwiń menu z przedmiotami */
+        }
+
+        .language-selection {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .accordion-item {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <div class="mobile-container">
-        <!-- Home / Welcome Screen Section -->
-        <section id="welcome-screen" class="screen-section active">
-            <div class="logo-wrapper">
-                <img src="logo.jpg" alt="Learnly Logo" class="app-logo">
-            </div>
-            <h1 class="neon-text-blue main-title">Learnly</h1>
-            <h2 class="neon-text-blue sub-title">Your short tests</h2>
+    <div class="mobile-container" style="overflow: hidden;"> <div id="main-slider" class="slider-wrapper">
             
-            <p class="inspiration-text">
-                Inspired by: <a href="https://www.duolingo.com" target="_blank" class="neon-text-green">Duolingo</a>
-            </p>
-            
-            <button id="btn-go" class="neon-btn-blue">Go to the website</button>
-        </section>
-
-        <!-- Main Content Section (Languages and Subjects) -->
-        <section id="main-content" class="screen-section pre-active">
-            <div class="language-selection">
-                <a href="polishindex.html" class="neon-btn-blue lang-toggle-btn">For Poles</a>
+            <section id="welcome-screen" class="screen-section">
+                <div class="logo-wrapper">
+                    <img src="logo.jpg" alt="Learnly Logo" class="app-logo">
+                </div>
+                <h1 class="neon-text-blue main-title">Learnly</h1>
+                <h2 class="neon-text-blue sub-title">Your short tests</h2>
                 
-                <div class="accordion-item">
-                    <button id="btn-english-speakers" class="neon-btn-blue lang-toggle-btn dropdown-trigger">For English speakers</button>
-                    <div id="english-subjects" class="subjects-container">
-                        <a href="geography-en.html" class="subject-btn">Geography</a>
-                        <a href="biology-en.html" class="subject-btn">Biology</a>
-                        <a href="history-en.html" class="subject-btn">History</a>
-                        <a href="mathematics-en.html" class="subject-btn">Mathematics</a>
-                        <a href="chemistry-en.html" class="subject-btn">Chemistry</a>
-                        <a href="physics-en.html" class="subject-btn">Physics</a>
-                        <a href="english-en.html" class="subject-btn">English Literature</a>
+                <p class="inspiration-text" style="margin-bottom: 30px;">
+                    Inspired by: <a href="https://www.duolingo.com" target="_blank" class="neon-text-green">Duolingo</a>
+                </p>
+                
+                <button id="btn-go" class="neon-btn-blue">Go to the website</button>
+            </section>
+
+            <section id="main-content" class="screen-section">
+                <h2 class="neon-text-blue" style="margin-bottom: 30px; font-size: 24px;">Choose Language</h2>
+                
+                <div class="language-selection">
+                    <a href="polishindex.html" class="neon-btn-blue lang-toggle-btn" style="text-decoration: none; text-align: center; display: block;">For Poles</a>
+                    
+                    <div class="accordion-item">
+                        <button id="btn-english-speakers" class="neon-btn-blue lang-toggle-btn dropdown-trigger">For English speakers</button>
+                        
+                        <div id="english-subjects" class="subjects-container">
+                            <a href="geography-en.html" class="subject-btn">Geography</a>
+                            <a href="biology-en.html" class="subject-btn">Biology</a>
+                            <a href="history-en.html" class="subject-btn">History</a>
+                            <a href="mathematics-en.html" class="subject-btn">Mathematics</a>
+                            <a href="chemistry-en.html" class="subject-btn">Chemistry</a>
+                            <a href="physics-en.html" class="subject-btn">Physics</a>
+                            <a href="english-en.html" class="subject-btn">English Literature</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnGo = document.getElementById("btn-go");
+            const slider = document.getElementById("main-slider");
+            const btnEnglish = document.getElementById("btn-english-speakers");
+            const englishSubjects = document.getElementById("english-subjects");
+
+            // 1. Akcja przesunięcia ekranu w lewo (nasunięcie przycisków z prawej)
+            if (btnGo && slider) {
+                btnGo.addEventListener("click", () => {
+                    slider.classList.add("slide-left");
+                });
+            }
+
+            // 2. Akcja rozwijania angielskiej wersji lekcji (Accordion)
+            if (btnEnglish && englishSubjects) {
+                btnEnglish.addEventListener("click", () => {
+                    englishSubjects.classList.toggle("open");
+                });
+            }
+        });
+    </script>
 </body>
 </html>
