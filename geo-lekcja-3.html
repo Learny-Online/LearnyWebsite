@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geografia Lekcja 3 - Learnly</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="mobile-container fade-in-page">
+        <header class="quiz-top-bar">
+            <a href="geography-pl.html" class="close-quiz">✕</a>
+            <div class="quiz-progress-track"><div id="progress-fill" class="quiz-progress-fill"></div></div>
+            <div class="quiz-lives"><span class="heart-icon">❤️</span> <span id="lives-count">3</span></div>
+        </header>
+
+        <main id="quiz-container" class="quiz-question-container"></main>
+
+        <footer class="quiz-action-footer">
+            <button id="main-action-btn" class="submit-answer-btn action-check" disabled>Sprawdź</button>
+        </footer>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSfx(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            if(type === 'correct') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            } else if(type === 'wrong') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+            } else {
+                osc.type = 'square'; osc.frequency.setValueAtTime(400, now); gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+            }
+            osc.start(); osc.stop(now + 0.3);
+        }
+
+        const lessonData = [
+            { "type": "choice", "q": "Jak nazywa się najbardziej zewnętrzna, skalna warstwa Ziemi?", "options": ["Jądro", "Płaszcz", "Skorupa ziemska"], "correct": "Skorupa ziemska" },
+            { "type": "choice", "q": "Która warstwa wnętrza Ziemi ma największą grubość?", "options": ["Skorupa", "Płaszcz Ziemi", "Jądro wewnętrzne"], "correct": "Płaszcz Ziemi" },
+            { "type": "input", "q": "Jak nazywał się ogromny superkontynent, który istniał miliony lat temu?", "correct": "Pangea" },
+            { "type": "choice", "q": "Gwałtowne przesunięcia płyt tektonicznych powodują powstawanie _______?", "options": ["Trzęsień ziemi", "Zórz polarnych", "Pływów morskich"], "correct": "Trzęsień ziemi" },
+            { "type": "choice", "q": "Samo centrum naszej planety stanowi metalowe _______?", "options": ["Jądro", "Płaszcz", "Magma"], "correct": "Jądro" },
+            { "type": "choice", "q": "Płynna, gorąca skała znajdująca się pod powierzchnią Ziemi to _______?", "options": ["Lawa", "Magma", "Granit"], "correct": "Magma" },
+            { "type": "input", "q": "Gdy rozżarzona płynna skała wydobędzie się na powierzchnię przez wulkan, staje się _______?", "correct": "Lawą" },
+            { "type": "choice", "q": "Gdzie występuje najwięcej czynnych wulkanów i trzęsień ziemi?", "options": ["W centrum płyt", "Na granicach płyt tektonicznych", "Na pustyniach"], "correct": "Na granicach płyt tektonicznych" },
+            { "type": "choice", "q": "Jaka skala służy do określania magnitudy (siły) trzęsień ziemi?", "options": ["Celsjusza", "Richtera", "Beauforta"], "correct": "Richtera" },
+            { "type": "input", "q": "Strefa wokół Oceanu Spokojnego o ogromnej aktywności wulkanicznej to Pacyficzny Pierścień _______?", "correct": "Ognia" }
+        ];
+
+        let currentStep = 0, lives = 3, selectedAnswer = "";
+        const container = document.getElementById('quiz-container');
+        const actionBtn = document.getElementById('main-action-btn');
+
+        function loadTask() {
+            if(currentStep >= 10 || lives <= 0) { finishQuiz(); return; }
+            selectedAnswer = ""; actionBtn.disabled = true; actionBtn.innerText = "Sprawdź"; actionBtn.className = "submit-answer-btn action-check";
+            const task = lessonData[currentStep];
+            document.getElementById('progress-fill').style.width = (currentStep * 10) + "%";
+            
+            if(task.type === 'choice') {
+                container.innerHTML = `<h2 class="question-text">${task.q}</h2><div class="quiz-options-list">` + 
+                    task.options.map(opt => `<button class="option-node" onclick="selectOption(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`).join('') + `</div>`;
+            } else {
+                container.innerHTML = `<h2 class="question-text">${task.q}</h2><div class="quiz-input-wrapper"><input type="text" id="ans-input" class="quiz-text-input" placeholder="Wpisz odpowiedź..." oninput="checkInput(this)"></div>`;
+            }
+        }
+
+        window.selectOption = (el, val) => {
+            document.querySelectorAll('.option-node').forEach(n => n.classList.remove('selected'));
+            el.classList.add('selected'); selectedAnswer = val; actionBtn.disabled = false; playSfx('match');
+        };
+
+        window.checkInput = (el) => { selectedAnswer = el.value.trim(); actionBtn.disabled = (selectedAnswer === ""); };
+
+        actionBtn.onclick = () => {
+            const task = lessonData[currentStep];
+            if(actionBtn.innerText === "Sprawdź") {
+                const isCorrect = selectedAnswer.toLowerCase() === task.correct.toLowerCase();
+                if(isCorrect) {
+                    playSfx('correct');
+                    if(task.type === 'choice') document.querySelector('.option-node.selected').classList.add('correct-state');
+                    else document.getElementById('ans-input').classList.add('correct-state');
+                    actionBtn.className = "submit-answer-btn action-continue"; actionBtn.innerText = "Dalej";
+                } else {
+                    playSfx('wrong'); lives--; document.getElementById('lives-count').innerText = lives;
+                    if(task.type === 'choice') document.querySelector('.option-node.selected').classList.add('incorrect-state');
+                    else document.getElementById('ans-input').classList.add('incorrect-state');
+                    actionBtn.innerText = "Dalej";
+                }
+            } else {
+                currentStep++; loadTask();
+            }
+        };
+
+        function finishQuiz() {
+            container.innerHTML = `<h1 class="neon-text-blue">${lives > 0 ? 'Lekcja Ukończona!' : 'Koniec żyć!'}</h1><a href="geography-pl.html" class="neon-btn-blue" style="margin-top:20px">Wróć do listy</a>`;
+            actionBtn.style.display = "none";
+        }
+
+        loadTask();
+    </script>
+</body>
+</html>

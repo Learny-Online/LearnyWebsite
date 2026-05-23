@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo Lesson 1 - Learny</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="mobile-container fade-in-page">
+        <header class="quiz-top-bar">
+            <a href="geography-en.html" class="close-quiz">✕</a>
+            <div class="quiz-progress-track"><div id="progress-fill" class="quiz-progress-fill"></div></div>
+            <div class="quiz-lives"><span class="heart-icon">❤️</span> <span id="lives-count">3</span></div>
+        </header>
+
+        <main id="quiz-container" class="quiz-question-container">
+            </main>
+
+        <footer class="quiz-action-footer">
+            <button id="main-action-btn" class="submit-answer-btn action-check" disabled>Check</button>
+        </footer>
+    </div>
+
+    <script>
+        // --- 1. AUDIO SYNTHESIZER ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSfx(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            if(type === 'correct') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            } else if(type === 'wrong') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+            } else {
+                osc.type = 'square'; osc.frequency.setValueAtTime(400, now); gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+            }
+            osc.start(); osc.stop(now + 0.3);
+        }
+
+        // --- 2. LESSON DATA ---
+const lessonData = [
+    { type: 'choice', q: 'Which is the largest continent?', options: ['Africa', 'Asia', 'North America'], correct: 'Asia' },
+    { type: 'choice', q: 'Which is the smallest continent?', options: ['Europe', 'Australia', 'Antarctica'], correct: 'Australia' },
+    { type: 'choice', q: 'What is the largest ocean on Earth?', options: ['Atlantic', 'Indian', 'Pacific'], correct: 'Pacific' },
+    { type: 'input', q: 'Which continent is known as the Frozen Continent?', correct: 'Antarctica' },
+    { type: 'choice', q: 'Which continent has the largest population?', options: ['Asia', 'Africa', 'Europe'], correct: 'Asia' },
+    { type: 'choice', q: 'The Amazon Rainforest is located in which continent?', options: ['Africa', 'South America', 'Asia'], correct: 'South America' },
+    { type: 'choice', q: 'Which ocean lies between Europe and North America?', options: ['Atlantic', 'Pacific', 'Arctic'], correct: 'Atlantic' },
+    { type: 'input', q: 'The world\'s deepest trench is the _______ Trench?', correct: 'Mariana' },
+    { type: 'choice', q: 'How many continents are there in the world?', options: ['5', '6', '7'], correct: '7' },
+    { type: 'choice', q: 'Which is the smallest ocean?', options: ['Southern', 'Indian', 'Arctic'], correct: 'Arctic' }
+];
+
+
+        let currentStep = 0, lives = 3, selectedAnswer = "";
+        const container = document.getElementById('quiz-container');
+        const actionBtn = document.getElementById('main-action-btn');
+
+        function loadTask() {
+            if(currentStep >= 10 || lives <= 0) { finishQuiz(); return; }
+            selectedAnswer = ""; actionBtn.disabled = true; actionBtn.innerText = "Check"; actionBtn.className = "submit-answer-btn action-check";
+            const task = lessonData[currentStep];
+            document.getElementById('progress-fill').style.width = (currentStep * 10) + "%";
+            
+            if(task.type === 'choice') {
+                container.innerHTML = `<h2 class="question-text">${task.q}</h2><div class="quiz-options-list">` + 
+                    task.options.map(opt => `<button class="option-node" onclick="selectOption(this, '${opt}')">${opt}</button>`).join('') + `</div>`;
+            } else {
+                container.innerHTML = `<h2 class="question-text">${task.q}</h2><div class="quiz-input-wrapper"><input type="text" id="ans-input" class="quiz-text-input" placeholder="Type here..." oninput="checkInput(this)"></div>`;
+            }
+        }
+
+        window.selectOption = (el, val) => {
+            document.querySelectorAll('.option-node').forEach(n => n.classList.remove('selected'));
+            el.classList.add('selected'); selectedAnswer = val; actionBtn.disabled = false; playSfx('match');
+        };
+
+        window.checkInput = (el) => { selectedAnswer = el.value.trim(); actionBtn.disabled = (selectedAnswer === ""); };
+
+        actionBtn.onclick = () => {
+            const task = lessonData[currentStep];
+            if(actionBtn.innerText === "Check") {
+                const isCorrect = selectedAnswer.toLowerCase() === task.correct.toLowerCase();
+                if(isCorrect) {
+                    playSfx('correct');
+                    if(task.type === 'choice') document.querySelector('.option-node.selected').classList.add('correct-state');
+                    else document.getElementById('ans-input').classList.add('correct-state');
+                    actionBtn.className = "submit-answer-btn action-continue"; actionBtn.innerText = "Continue";
+                } else {
+                    playSfx('wrong'); lives--; document.getElementById('lives-count').innerText = lives;
+                    if(task.type === 'choice') document.querySelector('.option-node.selected').classList.add('incorrect-state');
+                    else document.getElementById('ans-input').classList.add('incorrect-state');
+                    actionBtn.innerText = "Continue";
+                }
+            } else {
+                currentStep++; loadTask();
+            }
+        };
+
+        function finishQuiz() {
+            container.innerHTML = `<h1 class="neon-text-blue">${lives > 0 ? 'Lesson Complete!' : 'Out of Lives!'}</h1><a href="geography-en.html" class="neon-btn-blue" style="margin-top:20px">Back to List</a>`;
+            actionBtn.style.display = "none";
+        }
+
+        loadTask();
+    </script>
+</body>
+</html>

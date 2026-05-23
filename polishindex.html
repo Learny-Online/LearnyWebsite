@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learnly - Twoje Krótkie Testy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Ekran powitalny -->
+        <section id="welcome-screen" class="screen-section active">
+            <div class="logo-wrapper">
+                <img src="logo.jpg" alt="Learnly Logo" class="app-logo">
+            </div>
+            <h1 class="neon-text-blue main-title">Learnly</h1>
+            <h2 class="neon-text-blue sub-title">Twoje krótkie testy</h2>
+            
+            <p class="inspiration-text">
+                Inspirowane przez: <a href="https://www.duolingo.com" target="_blank" class="neon-text-green">Duolingo</a>
+            </p>
+            
+            <button id="btn-go" class="neon-btn-blue">Przejdź do strony</button>
+        </section>
+
+        <!-- Główna zawartość (Wybór przedmiotów dla Polaków) -->
+        <section id="main-content" class="screen-section pre-active">
+            <div class="language-selection">
+                <div class="accordion-item">
+                    <button id="btn-polish-speakers" class="neon-btn-blue lang-toggle-btn dropdown-trigger active-dropdown">Dla Polaków</button>
+                    <div id="polish-subjects" class="subjects-container open">
+                        <a href="geografia-pl.html" class="subject-btn">Geografia</a>
+                        <a href="biologia-pl.html" class="subject-btn">Biologia</a>
+                        <a href="historia-pl.html" class="subject-btn">Historia</a>
+                        <a href="matematyka-pl.html" class="subject-btn">Matematyka</a>
+                        <a href="chemia-pl.html" class="subject-btn">Chemia</a>
+                        <a href="fizyka-pl.html" class="subject-btn">Fizyka</a>
+                        <a href="angielski-pl.html" class="subject-btn">Język angielski</a>
+                    </div>
+                </div>
+
+                <a href="index.html" class="neon-btn-blue lang-toggle-btn">For English speakers</a>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

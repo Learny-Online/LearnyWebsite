@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learnly - Your Short Tests</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Home / Welcome Screen Section -->
+        <section id="welcome-screen" class="screen-section active">
+            <div class="logo-wrapper">
+                <img src="logo.jpg" alt="Learnly Logo" class="app-logo">
+            </div>
+            <h1 class="neon-text-blue main-title">Learnly</h1>
+            <h2 class="neon-text-blue sub-title">Your short tests</h2>
+            
+            <p class="inspiration-text">
+                Inspired by: <a href="https://www.duolingo.com" target="_blank" class="neon-text-green">Duolingo</a>
+            </p>
+            
+            <button id="btn-go" class="neon-btn-blue">Go to the website</button>
+        </section>
+
+        <!-- Main Content Section (Languages and Subjects) -->
+        <section id="main-content" class="screen-section pre-active">
+            <div class="language-selection">
+                <a href="polishindex.html" class="neon-btn-blue lang-toggle-btn">For Poles</a>
+                
+                <div class="accordion-item">
+                    <button id="btn-english-speakers" class="neon-btn-blue lang-toggle-btn dropdown-trigger">For English speakers</button>
+                    <div id="english-subjects" class="subjects-container">
+                        <a href="geography-en.html" class="subject-btn">Geography</a>
+                        <a href="biology-en.html" class="subject-btn">Biology</a>
+                        <a href="history-en.html" class="subject-btn">History</a>
+                        <a href="mathematics-en.html" class="subject-btn">Mathematics</a>
+                        <a href="chemistry-en.html" class="subject-btn">Chemistry</a>
+                        <a href="physics-en.html" class="subject-btn">Physics</a>
+                        <a href="english-en.html" class="subject-btn">English Literature</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

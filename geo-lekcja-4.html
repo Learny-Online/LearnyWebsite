@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geografia Lekcja 4 - Learnly</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="mobile-container fade-in-page">
+        <header class="quiz-top-bar">
+            <a href="geography-pl.html" class="close-quiz">✕</a>
+            <div class="quiz-progress-track"><div id="progress-fill" class="quiz-progress-fill"></div></div>
+            <div class="quiz-lives"><span class="heart-icon">❤️</span> <span id="lives-count">3</span></div>
+        </header>
+
+        <main id="quiz-container" class="quiz-question-container"></main>
+
+        <footer class="quiz-action-footer">
+            <button id="main-action-btn" class="submit-answer-btn action-check" disabled>Sprawdź</button>
+        </footer>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSfx(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            if(type === 'correct') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            } else if(type === 'wrong') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+            } else {
+                osc.type = 'square'; osc.frequency.setValueAtTime(400, now); gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+            }
+            osc.start(); osc.stop(now + 0.3);
+        }
+
+        const lessonData = [
+            { "type": "choice", "q": "W której warstwie atmosfery zachodzą wszystkie zjawiska pogodowe?", "options": ["Stratosfera", "Troposfera", "Termosfera"], "correct": "Troposfera" },
+            { "type": "choice", "q": "Który gaz stanowi największy procent składu powietrza (ok. 78%)?", "options": ["Tlen", "Azot", "Dwutlenek węgla"], "correct": "Azot" },
+            { "type": "input", "q": "Uśredniony stan pogody badany na danym obszarze przez minimum 30 lat to _______?", "correct": "Klimat" },
+            { "type": "choice", "q": "W której warstwie atmosfery znajduje się ochronna warstwa ozonowa?", "options": ["Troposferze", "Stratosferze", "Mezosferze"], "correct": "Stratosferze" },
+            { "type": "choice", "q": "Klimat o skrajnie niskich opadach i olbrzymich dobowych zmianach temperatur to klimat _______?", "options": ["Równikowy", "Zwrotnikowy suchy", "Umiarkowany"], "correct": "Zwrotnikowy suchy" },
+            { "type": "choice", "q": "Który gaz gazowy jest głównie odpowiedzialny za potęgowanie efektu cieplarnianego?", "options": ["Hel", "Dwutlenek węgla (CO2)", "Argon"], "correct": "Dwutlenek węgla (CO2)" },
+            { "type": "input", "q": "Chwilowy, fizyczny stan atmosfery w danym miejscu i czasie to _______?", "correct": "Pogoda" },
+            { "type": "choice", "q": "Jak nazywa się strefa klimatyczna występująca wokół równika?", "options": ["Równikowa", "Podbiegunowa", "Okołobiegunowa"], "correct": "Równikowa" },
+            { "type": "choice", "q": "Kondensacja pary wodnej w atmosferze bezpośrednio prowadzi do powstania _______?", "options": ["Wiatru", "Chmur", "Suszy"], "correct": "Chmur" },
+            { "type": "input", "q": "Przyrząd służący do precyzyjnego pomiaru ciśnienia atmosferycznego to _______?", "correct": "Barometr" }
+        ];
+
+        let currentStep = 0, lives = 3, selectedAnswer = "";
+        const container = document.getElementById('quiz-container');
+        const actionBtn = document.getElementById('main-action-btn');
+
+        function loadTask() {
+            if(currentStep >= 10 || lives <= 0) { finishQuiz(); return; }
+            selectedAnswer = ""; actionBtn.disabled = true; actionBtn.innerText = "Sprawdź"; actionBtn.className = "submit-answer-btn action-check";
+            const task = lessonData[currentStep];
+            document.getElementById('progress-fill').style.width = (currentStep * 10) + "%";
+            
+            if(task.type === 'choice') {
+                container.innerHTML = `<h2 class="question-text">${task.q}</h2><div class="quiz-options-list">` + 
+                    task.options.map(opt => `<button class="option-node" onclick="selectOption(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`).join('') + `</div>`;
+            } else {
+                container.innerHTML = `<h2 class="question-text">${task.q}</h2><div class="quiz-input-wrapper"><input type="text" id="ans-input" class="quiz-text-input" placeholder="Wpisz odpowiedź..." oninput="checkInput(this)"></div>`;
+            }
+        }
+
+        window.selectOption = (el, val) => {
+            document.querySelectorAll('.option-node').forEach(n => n.classList.remove('selected'));
+            el.classList.add('selected'); selectedAnswer = val; actionBtn.disabled = false; playSfx('match');
+        };
+
+        window.checkInput = (el) => { selectedAnswer = el.value.trim(); actionBtn.disabled = (selectedAnswer === ""); };
+
+        actionBtn.onclick = () => {
+            const task = lessonData[currentStep];
+            if(actionBtn.innerText === "Sprawdź") {
+                const isCorrect = selectedAnswer.toLowerCase() === task.correct.toLowerCase();
+                if(isCorrect) {
+                    playSfx('correct');
+                    if(task.type === 'choice') document.querySelector('.option-node.selected').classList.add('correct-state');
+                    else document.getElementById('ans-input').classList.add('correct-state');
+                    actionBtn.className = "submit-answer-btn action-continue"; actionBtn.innerText = "Dalej";
+                } else {
+                    playSfx('wrong'); lives--; document.getElementById('lives-count').innerText = lives;
+                    if(task.type === 'choice') document.querySelector('.option-node.selected').classList.add('incorrect-state');
+                    else document.getElementById('ans-input').classList.add('incorrect-state');
+                    actionBtn.innerText = "Dalej";
+                }
+            } else {
+                currentStep++; loadTask();
+            }
+        };
+
+        function finishQuiz() {
+            container.innerHTML = `<h1 class="neon-text-blue">${lives > 0 ? 'Lekcja Ukończona!' : 'Koniec żyć!'}</h1><a href="geography-pl.html" class="neon-btn-blue" style="margin-top:20px">Wróć do listy</a>`;
+            actionBtn.style.display = "none";
+        }
+
+        loadTask();
+    </script>
+</body>
+</html>

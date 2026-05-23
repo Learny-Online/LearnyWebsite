@@ -1,0 +1,595 @@
+/* ==========================================================================
+   LEARNLY WEBSITE - THE ONE & UNCHANGEABLE CORE STYLESHEET
+   Color Palette: Deep Slate (#1c1c1e, #242426), Neon Blue (#00f0ff), 
+                  Neon Green (#39ff14), Neon Red (#ff0055)
+   ========================================================================== */
+
+/* --- 1. RESET & BASE LAYOUT --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #1c1c1e;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Mobile Phone Simulator Container */
+.mobile-container {
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    min-height: 600px;
+    background-color: #242426;
+    border-left: 1px solid #2c2c2e;
+    border-right: 1px solid #2c2c2e;
+    position: relative;
+    padding: 24px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* --- 2. GLOBAL NEON TYPOGRAPHY & EFFECTS --- */
+.neon-text-blue {
+    color: #00f0ff;
+    text-shadow: 0 0 5px rgba(0, 240, 255, 0.6), 
+                 0 0 15px rgba(0, 240, 255, 0.4);
+}
+
+.neon-text-green {
+    color: #39ff14;
+    text-decoration: none;
+    font-weight: 700;
+    text-shadow: 0 0 5px rgba(57, 255, 20, 0.6);
+}
+
+.neon-text-red {
+    color: #ff0055;
+    text-shadow: 0 0 5px rgba(255, 0, 85, 0.6);
+}
+
+/* --- 3. HARD LAYER ANIMATIONS (INDEX PAGE SLIDE) --- */
+.screen-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.5s ease, 
+                visibility 0.5s;
+}
+
+.screen-section.exit {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-100%);
+}
+
+.screen-section.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.screen-section.pre-active {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100%);
+}
+
+/* Generic Page Entrance Animation */
+.fade-in-page {
+    animation: corePageFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes corePageFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 4. NAVIGATION HEADER --- */
+.header-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #2c2c2e;
+    width: 100%;
+}
+
+.back-btn {
+    color: #8e8e93;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.back-btn:active {
+    color: #00f0ff;
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- 5. COMPONENT BUTTONS & INTERACTIVE ELEMENTS --- */
+.neon-btn-blue {
+    display: block;
+    width: 100%;
+    background-color: transparent;
+    color: #00f0ff;
+    border: 2px solid #00f0ff;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+    margin-bottom: 16px;
+}
+
+.neon-btn-blue:active {
+    background-color: rgba(0, 240, 255, 0.15);
+    transform: scale(0.96);
+}
+
+/* Welcome Screen Specifics */
+.logo-wrapper {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+}
+
+.app-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.main-title {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.sub-title {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 35px;
+}
+
+.inspiration-text {
+    font-size: 14px;
+    color: #8e8e93;
+    margin-bottom: 40px;
+}
+
+/* --- 6. ACCORDION & SUBJECT DROPDOWNS --- */
+.language-selection {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.lang-toggle-btn {
+    margin-bottom: 16px;
+}
+
+.accordion-item {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.subjects-container {
+    display: block;
+    width: 100%;
+    max-height: 0px;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+}
+
+.subjects-container.open {
+    max-height: 450px;
+    opacity: 1;
+    overflow-y: auto;
+}
+
+.subject-btn {
+    display: block;
+    width: 100%;
+    background-color: #2c2c2e;
+    color: #ffffff;
+    border: 1px solid #3a3a3c;
+    padding: 13px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: left;
+    margin-bottom: 8px;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.subject-btn:active {
+    border-color: #00f0ff;
+    color: #00f0ff;
+    background-color: #3a3a3c;
+}
+
+/* --- 7. LESSON FEED / LISTS --- */
+.lessons-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 30px;
+}
+
+.lesson-card {
+    background-color: #2c2c2e;
+    border: 1px solid #3a3a3c;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.lesson-meta h3 {
+    font-size: 13px;
+    color: #8e8e93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.lesson-meta p {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.lesson-controls {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.start-lesson-btn {
+    background-color: transparent;
+    color: #00f0ff;
+    border: 1px solid #00f0ff;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.start-lesson-btn:active {
+    background-color: rgba(0, 240, 255, 0.1);
+}
+
+.material-btn {
+    color: #39ff14;
+    border: 1px solid #39ff14;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    text-shadow: 0 0 3px rgba(57, 255, 20, 0.3);
+}
+
+.material-btn:active {
+    background-color: rgba(57, 255, 20, 0.1);
+}
+
+/* --- 8. LESSON MATERIALS VIEW --- */
+.material-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    color: #e5e5ea;
+    font-size: 15px;
+    line-height: 1.6;
+    padding-bottom: 40px;
+}
+
+.material-content h2 {
+    color: #39ff14;
+    font-size: 20px;
+    margin-top: 10px;
+    text-shadow: 0 0 4px rgba(57, 255, 20, 0.2);
+}
+
+.material-card-tip {
+    background: rgba(0, 240, 255, 0.05);
+    border-left: 4px solid #00f0ff;
+    border-radius: 4px 12px 12px 4px;
+    padding: 14px;
+    margin: 10px 0;
+}
+
+.material-card-tip strong {
+    color: #00f0ff;
+}
+
+/* --- 9. QUIZ ENGINE SYSTEM (10 TASKS VIEW) --- */
+.quiz-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.close-quiz {
+    color: #8e8e93;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+/* Progress Bar Track */
+.quiz-progress-track {
+    flex-grow: 1;
+    height: 12px;
+    background-color: #2c2c2e;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.quiz-progress-fill {
+    height: 100%;
+    width: 0%; /* Dynamic from 0% to 100% via JS */
+    background: linear-gradient(90deg, #00f0ff, #39ff14);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+    border-radius: 6px;
+    transition: width 0.3s ease-out;
+}
+
+/* Lives / Hearts indicator */
+.quiz-lives {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #ff0055;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.heart-icon {
+    text-shadow: 0 0 5px rgba(255, 0, 85, 0.5);
+}
+
+/* Question Layout */
+.quiz-question-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex-grow: 1;
+}
+
+.question-text {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: left;
+    line-height: 1.4;
+}
+
+/* Task Variant A: Multiple Choice Container */
+.quiz-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.option-node {
+    background-color: #2c2c2e;
+    border: 2px solid #3a3a3c;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Multiple choice interactive feedback states */
+.option-node.selected {
+    border-color: #00f0ff;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    background-color: rgba(0, 240, 255, 0.05);
+}
+
+.option-node.correct-state {
+    border-color: #39ff14 !important;
+    color: #39ff14 !important;
+    box-shadow: 0 0 12px rgba(57, 255, 20, 0.3);
+    background-color: rgba(57, 255, 20, 0.08) !important;
+}
+
+.option-node.incorrect-state {
+    border-color: #ff0055 !important;
+    color: #ff0055 !important;
+    box-shadow: 0 0 12px rgba(255, 0, 85, 0.3);
+    background-color: rgba(255, 0, 85, 0.08) !important;
+}
+
+/* Task Variant B: Text input variant */
+.quiz-input-wrapper {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.quiz-text-input {
+    width: 100%;
+    background-color: #2c2c2e;
+    border: 2px solid #3a3a3c;
+    border-radius: 12px;
+    padding: 16px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.quiz-text-input:focus {
+    border-color: #00f0ff;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.quiz-text-input.correct-state {
+    border-color: #39ff14;
+    color: #39ff14;
+}
+
+.quiz-text-input.incorrect-state {
+    border-color: #ff0055;
+    color: #ff0055;
+}
+
+/* Task Variant C: Tile Pairing/Matching Board */
+.matching-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.tile-node {
+    background-color: #2c2c2e;
+    border: 2px solid #3a3a3c;
+    border-radius: 12px;
+    padding: 14px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 55px;
+}
+
+.tile-node.selected {
+    border-color: #00f0ff;
+    background-color: rgba(0, 240, 255, 0.05);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+.tile-node.matched {
+    border-color: #39ff14;
+    color: #39ff14;
+    background-color: rgba(57, 255, 20, 0.05);
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.tile-node.wrong-match {
+    border-color: #ff0055;
+    color: #ff0055;
+    animation: tileShake 0.3s ease-in-out;
+}
+
+@keyframes tileShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+/* --- 10. QUIZ ACTION FOOTER BAR (DUOLINGO-STYLE) --- */
+.quiz-action-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    width: 100%;
+}
+
+.submit-answer-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.submit-answer-btn.action-check {
+    background-color: #00f0ff;
+    color: #1c1c1e;
+    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+}
+
+.submit-answer-btn.action-check:active {
+    transform: scale(0.97);
+}
+
+.submit-answer-btn.action-continue {
+    background-color: #39ff14;
+    color: #1c1c1e;
+    box-shadow: 0 4px 15px rgba(57, 255, 20, 0.3);
+}
+
+/* Custom Scrollbar for global layouts */
+.mobile-container::-webkit-scrollbar {
+    width: 4px;
+}
+.mobile-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.mobile-container::-webkit-scrollbar-thumb {
+    background: #2c2c2e;
+    border-radius: 2px;
+}
