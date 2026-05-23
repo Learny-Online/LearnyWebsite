@@ -2,12 +2,14 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>Learnly - Twoje Krótkie Testy</title>
-    
+
     <style>
         /* =========================================
-           WBUDOWANY CSS (ODPORNY NA AWARIE)
+           RESET
            ========================================= */
         * {
             margin: 0;
@@ -20,19 +22,42 @@
         body {
             background-color: #0f172a;
             color: #ffffff;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* =========================================
+           SUWANY EKRAN
+           ========================================= */
+        .slider-wrapper {
+            display: flex;
+            width: 200vw;
+            min-height: 100vh;
+            transition: transform 0.6s ease;
+        }
+
+        .screen-section {
+            width: 100vw;
+            min-height: 100vh;
+
             display: flex;
             justify-content: center;
-            min-height: 100vh;
+            align-items: center;
+
+            padding: 30px 20px;
         }
 
         .mobile-container {
             width: 100%;
             max-width: 480px;
-            padding: 30px 20px;
+
             display: flex;
             flex-direction: column;
         }
-        
+
+        /* =========================================
+           TEKST
+           ========================================= */
         .neon-text-blue {
             color: #38bdf8;
             text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
@@ -65,29 +90,50 @@
             font-size: 0.95rem;
             margin-bottom: 40px;
         }
-        
+
+        /* =========================================
+           PRZYCISKI
+           ========================================= */
         .neon-btn-blue {
             display: block;
             width: 100%;
             padding: 16px;
+
             background: transparent;
             border: 2px solid #38bdf8;
             border-radius: 16px;
+
             color: #38bdf8;
             font-size: 1.1rem;
             font-weight: 700;
+
             text-align: center;
             text-decoration: none;
+
             outline: none;
-            box-shadow: 0 0 12px rgba(56, 189, 248, 0.15) inset, 0 0 12px rgba(56, 189, 248, 0.15);
-            transition: background 0.2s;
             cursor: pointer;
+
+            box-shadow:
+                0 0 12px rgba(56, 189, 248, 0.15) inset,
+                0 0 12px rgba(56, 189, 248, 0.15);
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .neon-btn-blue:hover {
+            transform: scale(1.02);
         }
 
         .neon-btn-blue:active {
             background: rgba(56, 189, 248, 0.2);
+            transform: scale(0.98);
         }
-        
+
+        /* =========================================
+           LOGO
+           ========================================= */
         .logo-wrapper {
             display: flex;
             justify-content: center;
@@ -97,36 +143,27 @@
         .app-logo {
             width: 100px;
             height: 100px;
+
             border-radius: 24px;
             object-fit: cover;
+
             background-color: #1e293b;
+
             display: flex;
             align-items: center;
             justify-content: center;
+
             font-size: 40px;
+
             border: 2px solid #334155;
         }
-        
-        .screen-section {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 85vh;
-            animation: fadeIn 0.4s ease-out;
-        }
 
-        .screen-section.active {
-            display: flex;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+        /* =========================================
+           PRZEDMIOTY
+           ========================================= */
         .language-selection {
             width: 100%;
+
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -137,70 +174,214 @@
         }
 
         .subjects-container {
-            display: none; /* Domyślnie schowane (zmienia JS) */
+            display: flex;
             flex-direction: column;
+
             gap: 10px;
+
             margin-top: 16px;
             padding: 15px;
+
             background: #1e293b;
             border-radius: 16px;
             border: 1px solid #334155;
+
+            animation: fadeIn 0.3s ease;
         }
 
         .subject-btn {
             display: block;
             width: 100%;
+
             padding: 12px;
+
             border: 1px solid #475569;
             border-radius: 12px;
+
             color: #cbd5e1;
+
             text-align: center;
             text-decoration: none;
+
             font-size: 1rem;
-            transition: background 0.2s;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .subject-btn:hover {
+            transform: translateY(-2px);
         }
 
         .subject-btn:active {
             background: #334155;
         }
+
+        /* =========================================
+           ANIMACJE
+           ========================================= */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================================
+           RESPONSIVE
+           ========================================= */
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 2.3rem;
+            }
+
+            .sub-title {
+                font-size: 1rem;
+            }
+
+            .neon-btn-blue {
+                font-size: 1rem;
+                padding: 14px;
+            }
+        }
     </style>
 </head>
-<body>
-    <div class="mobile-container">
-        
-        <section id="welcome-screen" class="screen-section active">
-            <div class="logo-wrapper">
-                <img src="logo.jpg" alt="Logo" class="app-logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'app-logo\'>🌍</div>';">
-            </div>
-            <h1 class="neon-text-blue main-title">Learnly</h1>
-            <h2 class="neon-text-blue sub-title">Twoje krótkie testy</h2>
-            
-            <p class="inspiration-text">
-                Inspirowane przez: <a href="https://www.duolingo.com" target="_blank" class="neon-text-green">Duolingo</a>
-            </p>
-            
-            <button id="btn-go" class="neon-btn-blue">Przejdź do strony</button>
-        </section>
 
-        <section id="main-content" class="screen-section">
-            <h2 class="neon-text-blue" style="margin-bottom: 30px; font-size: 24px; text-align: center;">Wybierz Przedmiot</h2>
-            
-            <div class="language-selection">
-                <div class="accordion-item">
-                    <button id="btn-polish-speakers" class="neon-btn-blue">Dla Polaków</button>
-                    
-                    <div id="polish-subjects" class="subjects-container" style="display: flex;">
-                        <a href="geografia-pl.html" class="subject-btn">Geografia</a>
-                        <a href="biologia-pl.html" class="subject-btn">Biologia</a>
-                        <a href="historia-pl.html" class="subject-btn">Historia</a>
-                        <a href="matematyka-pl.html" class="subject-btn">Matematyka</a>
-                        <a href="chemia-pl.html" class="subject-btn">Chemia</a>
-                        <a href="fizyka-pl.html" class="subject-btn">Fizyka</a>
-                        <a href="angielski-pl.html" class="subject-btn">Język angielski</a>
-                    </div>
+<body>
+
+    <div class="slider-wrapper" id="slider-wrapper">
+
+        <!-- =========================================
+             EKRAN POWITALNY
+             ========================================= -->
+        <section id="welcome-screen" class="screen-section">
+
+            <div class="mobile-container">
+
+                <div class="logo-wrapper">
+                    <img
+                        src="logo.jpg"
+                        alt="Logo"
+                        class="app-logo"
+
+                        onerror="
+                            this.style.display='none';
+                            this.parentElement.innerHTML='<div class=\'app-logo\'>🌍</div>';
+                        "
+                    >
                 </div>
 
-                <a href="index.html" class="neon-btn-blue" style="margin-top: 10px;">For English speakers</a>
+                <h1 class="neon-text-blue main-title">
+                    Learnly
+                </h1>
+
+                <h2 class="neon-text-blue sub-title">
+                    Twoje krótkie testy
+                </h2>
+
+                <p class="inspiration-text">
+                    Inspirowane przez:
+
+                    <a
+                        href="https://www.duolingo.com"
+                        target="_blank"
+                        class="neon-text-green"
+                    >
+                        Duolingo
+                    </a>
+                </p>
+
+                <button
+                    id="btn-go"
+                    class="neon-btn-blue"
+                >
+                    Przejdź do strony
+                </button>
+
+            </div>
+        </section>
+
+        <!-- =========================================
+             GŁÓWNY EKRAN
+             ========================================= -->
+        <section id="main-content" class="screen-section">
+
+            <div class="mobile-container">
+
+                <h2
+                    class="neon-text-blue"
+                    style="
+                        margin-bottom: 30px;
+                        font-size: 24px;
+                        text-align: center;
+                    "
+                >
+                    Wybierz Przedmiot
+                </h2>
+
+                <div class="language-selection">
+
+                    <!-- POLSKIE -->
+                    <div class="accordion-item">
+
+                        <button
+                            id="btn-polish-speakers"
+                            class="neon-btn-blue"
+                        >
+                            Dla Polaków
+                        </button>
+
+                        <div
+                            id="polish-subjects"
+                            class="subjects-container"
+                        >
+                            <a href="geografia-pl.html" class="subject-btn">
+                                Geografia
+                            </a>
+
+                            <a href="biologia-pl.html" class="subject-btn">
+                                Biologia
+                            </a>
+
+                            <a href="historia-pl.html" class="subject-btn">
+                                Historia
+                            </a>
+
+                            <a href="matematyka-pl.html" class="subject-btn">
+                                Matematyka
+                            </a>
+
+                            <a href="chemia-pl.html" class="subject-btn">
+                                Chemia
+                            </a>
+
+                            <a href="fizyka-pl.html" class="subject-btn">
+                                Fizyka
+                            </a>
+
+                            <a href="angielski-pl.html" class="subject-btn">
+                                Język angielski
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- ANGIELSKA WERSJA -->
+                    <a
+                        href="index.html"
+                        class="neon-btn-blue"
+                        style="margin-top: 10px;"
+                    >
+                        For English speakers
+                    </a>
+
+                </div>
+
             </div>
         </section>
 
@@ -208,34 +389,46 @@
 
     <script>
         // =========================================
-        // WBUDOWANY JAVASCRIPT
+        // ELEMENTY
         // =========================================
-        document.addEventListener("DOMContentLoaded", () => {
-            const btnGo = document.getElementById("btn-go");
-            const welcomeScreen = document.getElementById("welcome-screen");
-            const mainContent = document.getElementById("main-content");
-            const btnPolish = document.getElementById("btn-polish-speakers");
-            const polishSubjects = document.getElementById("polish-subjects");
+        const sliderWrapper =
+            document.getElementById("slider-wrapper");
 
-            // 1. Przejście z ekranu powitalnego do wyboru przedmiotów
-            if (btnGo) {
-                btnGo.addEventListener("click", () => {
-                    welcomeScreen.classList.remove("active");
-                    mainContent.classList.add("active");
-                });
+        const btnGo =
+            document.getElementById("btn-go");
+
+        const btnPolish =
+            document.getElementById("btn-polish-speakers");
+
+        const polishSubjects =
+            document.getElementById("polish-subjects");
+
+        // =========================================
+        // PRZEJŚCIE MIĘDZY EKRANAMI
+        // =========================================
+        btnGo.addEventListener("click", () => {
+            sliderWrapper.style.transform =
+                "translateX(-100vw)";
+        });
+
+        // =========================================
+        // HARMONIJKA
+        // =========================================
+        let isOpen = true;
+
+        btnPolish.addEventListener("click", () => {
+
+            if (isOpen) {
+                polishSubjects.style.display = "none";
+                isOpen = false;
+            }
+            else {
+                polishSubjects.style.display = "flex";
+                isOpen = true;
             }
 
-            // 2. Zwijanie/rozwijanie polskich przedmiotów (harmonijka)
-            if (btnPolish) {
-                btnPolish.addEventListener("click", () => {
-                    if (polishSubjects.style.display === "flex") {
-                        polishSubjects.style.display = "none";
-                    } else {
-                        polishSubjects.style.display = "flex";
-                    }
-                });
-            }
         });
     </script>
+
 </body>
 </html>
