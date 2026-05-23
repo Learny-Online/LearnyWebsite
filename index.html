@@ -2,123 +2,242 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Learnly - Your Short Tests</title>
-    <link rel="stylesheet" href="style.css">
+    
     <style>
-        /* Kontener dla płynnego przesuwania sekcji w poziomie */
-        .slider-wrapper {
-            display: flex;
-            width: 200%; /* Dwie sekcje obok siebie */
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-            height: 100%;
+        /* =========================================
+           CAŁY CSS JEST TUTAJ (BEZ ZEWNĘTRZNEGO PLIKU)
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .screen-section {
-            width: 50%; /* Każda sekcja zajmuje dokładnie ekran telefonu */
-            flex-shrink: 0;
-            height: 100%;
+        body {
+            background-color: #0f172a; /* Ciemne tło */
+            color: #ffffff;
             display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Typografia i neony */
+        .neon-text-blue {
+            color: #38bdf8;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+        }
+
+        .neon-text-green {
+            color: #4ade80;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .main-title {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .sub-title {
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: normal;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .inspiration-text {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 40px;
+        }
+        
+        /* Główne przyciski neonowe */
+        .neon-btn-blue {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            border: 2px solid #38bdf8;
+            border-radius: 16px;
+            color: #38bdf8;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.15) inset, 0 0 12px rgba(56, 189, 248, 0.15);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .neon-btn-blue:active {
+            background: rgba(56, 189, 248, 0.2);
+        }
+        
+        /* Logo awaryjne/obrazkowe */
+        .logo-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .app-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 24px;
+            object-fit: cover;
+            background-color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            border: 2px solid #334155;
+        }
+        
+        /* Logika przełączania ekranów */
+        .screen-section {
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-sizing: border-box;
-            padding: 20px;
+            min-height: 85vh;
+            animation: fadeIn 0.4s ease-out;
         }
 
-        /* Stan po kliknięciu - przesunięcie całego kontenera w lewo o jeden ekran */
-        .slide-left {
-            transform: translateX(-50%);
-        }
-
-        /* Ukrywanie menu angielskiego na start */
-        .subjects-container {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-            width: 100%;
+        .screen-section.active {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
         }
-
-        .subjects-container.open {
-            max-height: 400px; /* Rozwiń menu z przedmiotami */
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
+        
+        /* Menu języków i lista przedmiotów */
         .language-selection {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 16px;
         }
 
         .accordion-item {
             width: 100%;
         }
+
+        .subjects-container {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 16px;
+            padding: 15px;
+            background: #1e293b;
+            border-radius: 16px;
+            border: 1px solid #334155;
+        }
+
+        .subject-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #475569;
+            border-radius: 12px;
+            color: #cbd5e1;
+            text-align: center;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .subject-btn:active {
+            background: #334155;
+        }
     </style>
 </head>
 <body>
-    <div class="mobile-container" style="overflow: hidden;"> <div id="main-slider" class="slider-wrapper">
+    <div class="mobile-container">
+        
+        <section id="welcome-screen" class="screen-section active">
+            <div class="logo-wrapper">
+                <img src="logo.jpg" alt="Logo" class="app-logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'app-logo\'>🌍</div>';">
+            </div>
+            <h1 class="neon-text-blue main-title">Learnly</h1>
+            <h2 class="neon-text-blue sub-title">Your short tests</h2>
             
-            <section id="welcome-screen" class="screen-section">
-                <div class="logo-wrapper">
-                    <img src="logo.jpg" alt="Learnly Logo" class="app-logo">
-                </div>
-                <h1 class="neon-text-blue main-title">Learnly</h1>
-                <h2 class="neon-text-blue sub-title">Your short tests</h2>
-                
-                <p class="inspiration-text" style="margin-bottom: 30px;">
-                    Inspired by: <a href="https://www.duolingo.com" target="_blank" class="neon-text-green">Duolingo</a>
-                </p>
-                
-                <button id="btn-go" class="neon-btn-blue">Go to the website</button>
-            </section>
+            <p class="inspiration-text">
+                Inspired by: <a href="https://www.duolingo.com" target="_blank" class="neon-text-green">Duolingo</a>
+            </p>
+            
+            <button id="btn-go" class="neon-btn-blue">Go to the website</button>
+        </section>
 
-            <section id="main-content" class="screen-section">
-                <h2 class="neon-text-blue" style="margin-bottom: 30px; font-size: 24px;">Choose Language</h2>
+        <section id="main-content" class="screen-section">
+            <h2 class="neon-text-blue" style="margin-bottom: 30px; font-size: 24px; text-align: center;">Choose Language</h2>
+            
+            <div class="language-selection">
+                <a href="polishindex.html" class="neon-btn-blue">For Poles</a>
                 
-                <div class="language-selection">
-                    <a href="polishindex.html" class="neon-btn-blue lang-toggle-btn" style="text-decoration: none; text-align: center; display: block;">For Poles</a>
+                <div class="accordion-item">
+                    <button id="btn-english-speakers" class="neon-btn-blue">For English speakers</button>
                     
-                    <div class="accordion-item">
-                        <button id="btn-english-speakers" class="neon-btn-blue lang-toggle-btn dropdown-trigger">For English speakers</button>
-                        
-                        <div id="english-subjects" class="subjects-container">
-                            <a href="geography-en.html" class="subject-btn">Geography</a>
-                            <a href="biology-en.html" class="subject-btn">Biology</a>
-                            <a href="history-en.html" class="subject-btn">History</a>
-                            <a href="mathematics-en.html" class="subject-btn">Mathematics</a>
-                            <a href="chemistry-en.html" class="subject-btn">Chemistry</a>
-                            <a href="physics-en.html" class="subject-btn">Physics</a>
-                            <a href="english-en.html" class="subject-btn">English Literature</a>
-                        </div>
+                    <div id="english-subjects" class="subjects-container">
+                        <a href="geography-en.html" class="subject-btn">Geography</a>
+                        <a href="biology-en.html" class="subject-btn">Biology</a>
+                        <a href="history-en.html" class="subject-btn">History</a>
+                        <a href="mathematics-en.html" class="subject-btn">Mathematics</a>
+                        <a href="chemistry-en.html" class="subject-btn">Chemistry</a>
+                        <a href="physics-en.html" class="subject-btn">Physics</a>
+                        <a href="english-en.html" class="subject-btn">English Literature</a>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-        </div>
     </div>
 
     <script>
+        // =========================================
+        // CAŁY JAVASCRIPT JEST TUTAJ (BEZ ZEWNĘTRZNEGO PLIKU)
+        // =========================================
         document.addEventListener("DOMContentLoaded", () => {
             const btnGo = document.getElementById("btn-go");
-            const slider = document.getElementById("main-slider");
+            const welcomeScreen = document.getElementById("welcome-screen");
+            const mainContent = document.getElementById("main-content");
             const btnEnglish = document.getElementById("btn-english-speakers");
             const englishSubjects = document.getElementById("english-subjects");
 
-            // 1. Akcja przesunięcia ekranu w lewo (nasunięcie przycisków z prawej)
-            if (btnGo && slider) {
+            // 1. Zmiana ekranu (ukrywamy powitanie, pokazujemy języki)
+            if (btnGo) {
                 btnGo.addEventListener("click", () => {
-                    slider.classList.add("slide-left");
+                    welcomeScreen.classList.remove("active");
+                    mainContent.classList.add("active");
                 });
             }
 
-            // 2. Akcja rozwijania angielskiej wersji lekcji (Accordion)
-            if (btnEnglish && englishSubjects) {
+            // 2. Rozwijanie przedmiotów angielskich
+            if (btnEnglish) {
                 btnEnglish.addEventListener("click", () => {
-                    englishSubjects.classList.toggle("open");
+                    if (englishSubjects.style.display === "flex") {
+                        englishSubjects.style.display = "none";
+                    } else {
+                        englishSubjects.style.display = "flex";
+                    }
                 });
             }
         });
